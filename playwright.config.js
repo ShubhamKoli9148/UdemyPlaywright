@@ -10,7 +10,7 @@ const config=({
   },
   reporter: 'html',
   use: {
-    browserName: 'webkit',
+    browserName: 'chromium',
     headless: false,
 
   } 
