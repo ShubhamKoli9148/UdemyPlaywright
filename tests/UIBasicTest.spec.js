@@ -32,7 +32,7 @@ test('Login - positive Testcase ', async ({page}) => {
 
 });
 
-test.only('Login - Negative Testcase ', async ({page}) => {
+test('Login - Negative Testcase ', async ({page}) => {
 
    await page.goto('https://rahulshettyacademy.com/loginpagePractise/');
 
@@ -51,4 +51,21 @@ test.only('Login - Negative Testcase ', async ({page}) => {
    await expect(errorMessage).toContain('Incorrect');
 
 
+});
+
+test.only ("UI Controls - Dropdown",async ({page}) => {
+
+   await page.goto('https://rahulshettyacademy.com/loginpagePractise/');
+   await page.locator("input#username").fill('rahulshettyacademy');
+   await page.locator("input#password").fill('Learning@830$3mK2');
+   await page.locator(".radiotextsty").last().click();
+   await page.locator("button#okayBtn").click();
+await expect(page.locator(".radiotextsty").last().isChecked());
+   const dropdown = await page.locator("select.form-control");
+   await dropdown.selectOption("consult");
+
+   await page.locator("#terms").click();
+   await expect(page.locator("#terms")).toBeChecked();
+
+   
 });
