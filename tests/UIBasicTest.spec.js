@@ -53,7 +53,7 @@ test('Login - Negative Testcase ', async ({page}) => {
 
 });
 
-test.only ("UI Controls - Dropdown",async ({page}) => {
+test ("UI Controls - Dropdown",async ({page}) => {
 
    await page.goto('https://rahulshettyacademy.com/loginpagePractise/');
    await page.locator("input#username").fill('rahulshettyacademy');
@@ -66,6 +66,37 @@ await expect(page.locator(".radiotextsty").last().isChecked());
 
    await page.locator("#terms").click();
    await expect(page.locator("#terms")).toBeChecked();
+
+   
+});
+
+test.only ("Control of child window ",async ({browser}) => {
+
+   const context = await browser.newContext();
+   const page = await context.newPage();
+   await page.goto('https://rahulshettyacademy.com/loginpagePractise/');
+   const username = await page.locator("input#username");
+
+   const childpage = await page.locator("a[href*='documents-request']");
+
+   const [newpage] = await Promise.all([
+      context.waitForEvent('page'),
+       childpage.click(),
+   ]);
+   let newtext =await newpage.locator('.red').textContent();
+   const arraytext= newtext.split('@')[1];
+   const domain = arraytext.split(' ')[0];
+   console.log(domain);
+   await page.locator("input#username").fill(domain);
+   const usernameText = await page.locator("input#username").textContent();
+   page.pause();
+   console.log(usernameText);
+
+
+   
+
+
+
 
    
 });
