@@ -5,6 +5,10 @@
     "country": "India",
     "prefix": "+91",
     "username": "shubhamkoli914842@gmail.com",
-    "password": "Koli@12321"
+    "password": "Koli@12321",
+    "cardNumber": "1234567890123456",
+    "expiryDate": "12/25",
+    "cvv": "223",
+    "coupon": "OFFER123"
 
 }
