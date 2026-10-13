@@ -62,11 +62,23 @@ test('E2E Testcase - CLient ', async ({page}) => {
     await expiryField.locator('select').nth(0).selectOption(expdate);
     await expiryField.locator('select').nth(1).selectOption(expyear);
 
-    await page.locator('div .title').filter({hasText: 'CVV Code '}).locator('input').fill(testdata.cvv);
+   await page.locator('div.field.small:has-text("CVV Code") input').fill(testdata.cvv);
+    
+    await page.locator('div.field:has-text("Name on Card ") input').fill(testdata.first_name+ ' '+testdata.last_name);
+    await page.locator('.form-group input').pressSequentially(dataCountry,{delay:100});
+    const selectSection = await page.locator('.ta-results list-group ng-star-inserted');
+    await selectCountry.waitFor();
 
-    await page.locator('div .title').filter({hasText: 'Name on Card '}).locator('input').fill(testdata.firstname + " " + testdata.lastname);
-    await page.locator('.form-group input').fill(testdata.country);
-    await page.locator('.ng-star-inserted ').filter({hasText:' India'}).click();
+    const selectCountryCount = await page.locator("button").count();
+    for(let i=0; i<selectCountryCount; ++i){
+        const text = await selectSection.locator('button').nth(1).textContent();
+        if(text === testdata.country){
+            
+            await selectSection.locator('button').nth(1).click();
+            break;
+        }
+    }
+    
     await takeScreenshot(page, 'CardDetails.png');
 
 
