@@ -1,5 +1,6 @@
 const { test, expect } = require('@playwright/test');
 const { takeScreenshot } = require('../helper');
+import { count } from 'node:console';
 import testdata from '../testData/testdata.json';
 
 test('E2E Testcase - CLient ', async ({page}) => {
@@ -65,35 +66,62 @@ test('E2E Testcase - CLient ', async ({page}) => {
    await page.locator('div.field.small:has-text("CVV Code") input').fill(testdata.cvv);
     
     await page.locator('div.field:has-text("Name on Card ") input').fill(testdata.first_name+ ' '+testdata.last_name);
-    await page.locator('.form-group input').pressSequentially(dataCountry,{delay:100});
-    const selectSection = await page.locator('.ta-results list-group ng-star-inserted');
-    await selectCountry.waitFor();
+    await page.locator('.form-group input').pressSequentially(testdata.country);
+    const selectSection = await page.locator('.ta-results');
+    await selectSection.waitFor();
 
     const selectCountryCount = await page.locator("button").count();
     for(let i=0; i<selectCountryCount; ++i){
         const text = await selectSection.locator('button').nth(1).textContent();
-        if(text === testdata.country){
-            
+        if(text === ' '+testdata.country){
             await selectSection.locator('button').nth(1).click();
             break;
         }
     }
     
     await takeScreenshot(page, 'CardDetails.png');
+    await page.locator('a.btnn.action__submit.ng-star-inserted').click();
 
 
     // Order Confirmation 
 
-   const orderConfirmation = await page.locator('.hero-primary h3:has-text(" Thankyou for the order. ")').waitFor();
+   const orderConfirmation = await page.locator('h1.hero-primary');
    await expect(orderConfirmation).toBeVisible();
+   await expect(orderConfirmation).toContainText("Thankyou")
 
    const orderID = await page.locator('.em-spacer-1 .ng-star-inserted').textContent();
-   orderID = orderID.split('|')[1];
-   orderID = orderID.split('|')[0];
-   console.log(orderID);
+   const orderIDORG = orderID.split('|')[1].trim();
+
+   console.log(orderIDORG);
+   await takeScreenshot(page, 'ProductOrdered.png');
 
    const ordername = await page.locator('td div .title').filter({hasText:'ZARA COAT 3'}).textContent();
    await expect(ordername).toContain(productName);
+
+   // check and validate in Order section 
+
+   await page.locator('button[routerlink*="/dashboard/myorders"]').click();
+
+   const orderSection = await page.locator("tbody");
+   await orderSection.waitFor();
+   const orderrows = await page.locator('tbody tr');
+   const orderrowsc = await page.locator('tbody tr').count();
+   console.log(orderrowsc);
+   
+   for(let i=0; i<orderrowsc; ++i){
+     const orderidrev = await orderSection.locator('th').nth(i).textContent();
+     if(orderIDORG.includes(orderidrev)){ 
+        await orderrowsc.nth(i).locator(" td button[class$='btn btn-primary']").first().click();
+        break;
+
+     }
+   }
+
+   const orderIdDetails = await page.locator(".col-text").textContent();
+   expect(orderIDORG.includes(orderIdDetails)).toBeTruthy();
+
+   
+   
 
 
 
